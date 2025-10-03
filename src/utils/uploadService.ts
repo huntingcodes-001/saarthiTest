@@ -141,7 +141,7 @@ export class UploadService {
       // Gemini audio transcription via REST (multimodal prompt)
       // Use v1 endpoint and a supported model name
       // See docs: https://ai.google.dev/gemini-api/docs
-      const model = 'gemini-1.5-flash-latest';
+      const model = 'gemini-2.5-flash';
       const response = await fetch('https://generativelanguage.googleapis.com/v1/models/' + model + ':generateContent?key=' + this.geminiApiKey, {
         method: 'POST',
         headers: {

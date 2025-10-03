@@ -6,14 +6,13 @@ import { db } from './utils/db';
 import { CustomerList } from './components/CustomerList';
 import { ChatInterface } from './components/ChatInterface';
 import { ChatHistory } from './components/ChatHistory';
-import { Login } from './components/Login';
+// Login removed per request
 
 function App() {
   const [customers, setCustomers] = useState<Customer[]>([]);
   const [sessions, setSessions] = useState<ChatSession[]>([]);
   const [selectedCustomer, setSelectedCustomer] = useState<Customer | null>(null);
   const [activeView, setActiveView] = useState<'customers' | 'history'>('customers');
-  const [isAuthed, setIsAuthed] = useState<boolean>(false);
   const [loading, setLoading] = useState<boolean>(true);
 
   useEffect(() => {
@@ -103,15 +102,12 @@ function App() {
     setSelectedCustomer(null);
   };
 
-  if (!isAuthed) {
-    if (loading) {
-      return (
-        <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-blue-50 to-gray-100">
-          <div className="text-gray-700">Loading...</div>
-        </div>
-      );
-    }
-    return <Login onLoginSuccess={() => setIsAuthed(true)} />;
+  if (loading) {
+    return (
+      <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-blue-50 to-gray-100">
+        <div className="text-gray-700">Loading...</div>
+      </div>
+    );
   }
 
   return (

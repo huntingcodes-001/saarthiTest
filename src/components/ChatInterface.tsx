@@ -211,7 +211,7 @@ export function ChatInterface({ customer, onClose, onSessionComplete }: ChatInte
           <div className="bg-gray-50 rounded-lg p-6">
             <h3 className="font-semibold text-gray-800 mb-4">Voice Recording</h3>
 
-            <div className="flex items-center justify-center gap-3 mb-4">
+            <div className="flex items-center justify-center gap-3 mb-4 flex-wrap">
               {recordingState === 'idle' && (
                 <button
                   onClick={handleStartRecording}
@@ -255,17 +255,17 @@ export function ChatInterface({ customer, onClose, onSessionComplete }: ChatInte
               )}
 
               {recordingState === 'stopped' && audioBlob && (
-                <>
+                <div className="w-full grid grid-cols-1 sm:grid-cols-3 gap-2">
                   <button
                     onClick={handleRedoRecording}
-                    className="flex items-center gap-2 bg-blue-600 text-white px-6 py-3 rounded-lg hover:bg-blue-700 transition-colors"
+                    className="w-full flex items-center justify-center gap-2 bg-blue-600 text-white px-4 py-3 rounded-lg hover:bg-blue-700 transition-colors"
                   >
                     <RotateCcw className="w-5 h-5" />
                     Redo
                   </button>
                   <button
                     onClick={handleDeleteRecording}
-                    className="flex items-center gap-2 bg-red-600 text-white px-6 py-3 rounded-lg hover:bg-red-700 transition-colors"
+                    className="w-full flex items-center justify-center gap-2 bg-red-600 text-white px-4 py-3 rounded-lg hover:bg-red-700 transition-colors"
                   >
                     <Trash2 className="w-5 h-5" />
                     Delete
@@ -273,12 +273,12 @@ export function ChatInterface({ customer, onClose, onSessionComplete }: ChatInte
                   <button
                     onClick={handleUpload}
                     disabled={isUploading}
-                    className="flex items-center gap-2 bg-green-600 text-white px-6 py-3 rounded-lg hover:bg-green-700 transition-colors disabled:bg-gray-400 disabled:cursor-not-allowed"
+                    className="w-full flex items-center justify-center gap-2 bg-green-600 text-white px-4 py-3 rounded-lg hover:bg-green-700 transition-colors disabled:bg-gray-400 disabled:cursor-not-allowed"
                   >
                     <Upload className="w-5 h-5" />
                     {isUploading ? 'Uploading...' : 'Upload'}
                   </button>
-                </>
+                </div>
               )}
             </div>
 
