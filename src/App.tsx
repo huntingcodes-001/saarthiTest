@@ -1,39 +1,76 @@
+// huntingcodes-001/saarthitest/saarthiTest-e696549bf5e52b3ce752d9be261a6afc22c35b8b/src/App.tsx
+
 import { useState, useEffect } from 'react';
-import { Users, MessageSquare } from 'lucide-react';
+import { Users, MessageSquare, LogOut } from 'lucide-react'; // IMPORTED LogOut ICON
 import { Customer, ChatSession } from './types';
 import { storageUtils } from './utils/storage';
 import { db } from './utils/db';
 import { CustomerList } from './components/CustomerList';
 import { ChatInterface } from './components/ChatInterface';
 import { ChatHistory } from './components/ChatHistory';
-// Login removed per request
+import { Login } from './components/Login';
+import { supabase } from './utils/supabaseClient'; // IMPORTED SUPABASE CLIENT
+import { Session } from '@supabase/supabase-js'; // IMPORTED SUPABASE SESSION TYPE
 
 function App() {
   const [customers, setCustomers] = useState<Customer[]>([]);
   const [sessions, setSessions] = useState<ChatSession[]>([]);
   const [selectedCustomer, setSelectedCustomer] = useState<Customer | null>(null);
   const [activeView, setActiveView] = useState<'customers' | 'history'>('customers');
+  const [session, setSession] = useState<Session | null>(null); // Replaced isAuthed with Supabase Session
   const [loading, setLoading] = useState<boolean>(true);
 
+  // Function to load all necessary data
+  const loadInitialData = async () => {
+    try {
+      const [dbCustomers, dbSessions] = await Promise.all([
+        db.listCustomers(),
+        db.listSessions(),
+      ]);
+      setCustomers(dbCustomers);
+      setSessions(dbSessions);
+    } catch (e) {
+      // Fallback to local if DB not available
+      const loadedCustomers = storageUtils.getCustomers();
+      const loadedSessions = storageUtils.getSessions();
+      setCustomers(loadedCustomers);
+      setSessions(loadedSessions);
+    }
+  };
+
+  // Auth State Management and Data Loading
   useEffect(() => {
-    (async () => {
-      try {
-        const [dbCustomers, dbSessions] = await Promise.all([
-          db.listCustomers(),
-          db.listSessions(),
-        ]);
-        setCustomers(dbCustomers);
-        setSessions(dbSessions);
-      } catch (e) {
-        // Fallback to local if DB not available
-        const loadedCustomers = storageUtils.getCustomers();
-        const loadedSessions = storageUtils.getSessions();
-        setCustomers(loadedCustomers);
-        setSessions(loadedSessions);
-      } finally {
-        setLoading(false);
+    const checkSessionAndSetupListener = async () => {
+      // 1. Initial check for session
+      const { data: { session: currentSession } } = await supabase.auth.getSession();
+      setSession(currentSession);
+      
+      if (currentSession) {
+        await loadInitialData();
       }
-    })();
+      setLoading(false);
+
+      // 2. Set up Auth State Change Listener
+      const { data: authListener } = supabase.auth.onAuthStateChange(
+        (event, newSession) => {
+          setSession(newSession);
+          if (event === 'SIGNED_IN') {
+              loadInitialData(); // Load data on fresh sign in
+          } else if (event === 'SIGNED_OUT') {
+              // Clear app state on sign out
+              setCustomers([]);
+              setSessions([]);
+              setSelectedCustomer(null);
+          }
+        }
+      );
+
+      return () => {
+        authListener.subscription.unsubscribe();
+      };
+    };
+    
+    checkSessionAndSetupListener();
   }, []);
 
   const handleAddCustomer = async (customerData: Omit<Customer, 'id' | 'createdAt'>) => {
@@ -101,6 +138,18 @@ function App() {
   const handleCloseChat = () => {
     setSelectedCustomer(null);
   };
+  
+  // LOGOUT FUNCTIONALITY
+  const handleLogout = async () => {
+    setLoading(true);
+    const { error } = await supabase.auth.signOut();
+    if (error) {
+      console.error('Error logging out:', error);
+    }
+    // Auth state listener handles session state and data clearing
+    setLoading(false);
+  };
+  // END LOGOUT FUNCTIONALITY
 
   if (loading) {
     return (
@@ -108,6 +157,12 @@ function App() {
         <div className="text-gray-700">Loading...</div>
       </div>
     );
+  }
+
+  // Use session existence to determine authentication state
+  if (!session) {
+    // onLoginSuccess can be an empty function since the Auth listener handles state change
+    return <Login onLoginSuccess={() => {}} />; 
   }
 
   return (
@@ -142,6 +197,17 @@ function App() {
                 <MessageSquare className="w-4 h-4" />
                 Chat History
               </button>
+              
+              {/* LOGOUT BUTTON ADDED HERE */}
+              <button
+                onClick={handleLogout}
+                disabled={loading}
+                className="flex-1 sm:flex-initial justify-center flex items-center gap-2 px-4 py-2 rounded-lg transition-colors bg-red-600 text-white hover:bg-red-700 disabled:bg-red-400"
+              >
+                <LogOut className="w-4 h-4" />
+                Logout
+              </button>
+              {/* END LOGOUT BUTTON */}
             </div>
           </div>
         </div>

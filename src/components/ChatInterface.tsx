@@ -156,7 +156,7 @@ export function ChatInterface({ customer, onClose, onSessionComplete }: ChatInte
         onSessionComplete(session);
 
         setTimeout(() => {
-          handleDeleteRecording();
+          // handleDeleteRecording();
           setStatusMessage('Session saved successfully!');
         }, 1500);
       } else {
