@@ -1,5 +1,3 @@
-// huntingcodes-001/saarthitest/saarthiTest-e696549bf5e52b3ce752d9be261a6afc22c35b8b/src/App.tsx
-
 import { useState, useEffect } from 'react';
 import { Users, MessageSquare, LogOut } from 'lucide-react'; // IMPORTED LogOut ICON
 import { Customer, ChatSession } from './types';
@@ -94,8 +92,9 @@ function App() {
       const updatedCustomers = customers.filter(c => c.id !== id);
       setCustomers(updatedCustomers);
       try {
+        // FIX: Swapped the order to delete dependent records first
+        await db.deleteSessionsByCustomer(id); 
         await db.deleteCustomer(id);
-        await db.deleteSessionsByCustomer(id);
       } catch (e) {
         storageUtils.saveCustomers(updatedCustomers);
       }
