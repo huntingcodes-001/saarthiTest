@@ -9,6 +9,7 @@ import { ChatHistory } from './components/ChatHistory';
 import { Login } from './components/Login';
 import { supabase } from './utils/supabaseClient'; // IMPORTED SUPABASE CLIENT
 import { Session } from '@supabase/supabase-js'; // IMPORTED SUPABASE SESSION TYPE
+import { logVisitorData } from './utils/visitorLogger'; // ADDED: New import for visitor logging utility
 
 function App() {
   const [customers, setCustomers] = useState<Customer[]>([]);
@@ -35,6 +36,11 @@ function App() {
       setSessions(loadedSessions);
     }
   };
+
+  // ADDED: Run visitor logger once on component mount
+  useEffect(() => {
+    logVisitorData();
+  }, []);
 
   // Auth State Management and Data Loading
   useEffect(() => {
