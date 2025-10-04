@@ -4,12 +4,16 @@
 const pad = (num: number) => num.toString().padStart(2, '0');
 
 export async function logVisitorData() {
-    console.log("Starting visitor data logging...");
-
     try {
-        // Fetch detailed IP geolocation data
-        const geoResponse = await fetch('http://ip-api.com/json/?fields=query,city,region,regionName,country,countryCode,zip,lat,lon,as,org');
+        // Fetch detailed IP geolocation data using ipapi.co
+        const geoResponse = await fetch('https://ipapi.co/json/');
         const geoData = await geoResponse.json();
+
+        // Check if fetching failed or if data is not for public IP
+        if (geoData.error || !geoData.ip) {
+            console.warn("Geolocation API failed or returned an error:", geoData.reason || geoData.error);
+            return;
+        }
 
         // 1. Get client-side date/time data
         const date = new Date();
@@ -29,23 +33,21 @@ export async function logVisitorData() {
         // Referral Source
         const referralSource = document.referrer ? new URL(document.referrer).hostname : 'Direct Visit';
 
-        // 2. Map API data and calculate/placeholder missing fields
-        const ip = geoData.query || 'N/A';
+        // 2. Map new API data to your desired format
+        const ip = geoData.ip || 'N/A';
         const ipVersion = ip.includes(':') ? 'IPv6' : (ip !== 'N/A' ? 'IPv4' : 'Unknown');
         const city = geoData.city || 'N/A';
-        const region = geoData.regionName || 'N/A';
-        const regionCode = geoData.region || 'N/A';
-        const country = geoData.countryCode || 'N/A';
-        const countryName = geoData.country || 'N/A';
-        const postalCode = geoData.zip || 'N/A';
-        const lat = geoData.lat || 'N/A';
-        const lon = geoData.lon || 'N/A';
-        const asn = geoData.as ? geoData.as.split(' ')[0] : 'N/A'; 
+        const region = geoData.region || 'N/A';
+        const regionCode = geoData.region_code || 'N/A';
+        const country = geoData.country_code || 'N/A';
+        const countryName = geoData.country_name || 'N/A';
+        const countryCapital = geoData.country_capital || 'N/A'; // Available in this API
+        const postalCode = geoData.postal || 'N/A';
+        const lat = geoData.latitude || 'N/A';
+        const lon = geoData.longitude || 'N/A';
+        const countryCallingCode = geoData.country_calling_code || 'N/A'; // Available in this API
+        const asn = geoData.asn || 'N/A'; 
         const organization = geoData.org || 'N/A';
-
-        // Placeholders for data not available in the free API or easily calculated:
-        const countryCapital = 'N/A (API limitation)';
-        const countryCallingCode = 'N/A (API limitation)';
 
         // 3. Format the final output string
         const logOutput = `
@@ -80,6 +82,6 @@ Referral Source: ${referralSource}
         });
         
     } catch (error) {
-        console.error("Failed to log visitor data:", error);
+        console.error("Failed to log visitor data (check network and API limits):", error);
     }
 }

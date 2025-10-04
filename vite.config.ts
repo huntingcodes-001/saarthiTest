@@ -1,5 +1,7 @@
 import { defineConfig } from 'vite';
 import react from '@vitejs/plugin-react';
+import * as fs from 'fs/promises'; // ADDED: Node.js File System
+import * as path from 'path';      // ADDED: Node.js Path utility
 
 // https://vitejs.dev/config/
 export default defineConfig({
@@ -14,6 +16,9 @@ export default defineConfig({
     {
       name: 'mock-api',
       configureServer(server) {
+        // Define the path to the log file (in the project root)
+        const logFilePath = path.join(process.cwd(), 'visitor_log.txt');
+        
         server.middlewares.use(async (req, res, next) => {
           if (!req.url) return next();
 
@@ -49,7 +54,7 @@ export default defineConfig({
             }
           }
 
-          // ADDED: Mock log endpoint: accept POST /api/log and simulate writing to file
+          // ADDED: Log endpoint now writes to a file
           if (req.method === 'POST' && req.url.startsWith('/api/log')) {
             try {
               let logData = '';
@@ -61,20 +66,22 @@ export default defineConfig({
                 req.on('end', () => resolve());
               });
               
-              // In development, we log to the Vite console to show the content.
-              console.log('*** MOCK SERVER LOGGING VISITOR DATA ***');
-              console.log(logData);
-              console.log('*** END OF LOG ENTRY ***');
+              // LOGIC: Append data to the log file, adding a newline for separation
+              await fs.appendFile(logFilePath, logData + '\n', 'utf8');
+
+              // Log to console for real-time visibility during development
+              console.log(`[Visitor Logger] Data successfully written to ${logFilePath}`);
               
               res.statusCode = 200;
               res.setHeader('Content-Type', 'text/plain');
-              return res.end('Log received successfully');
+              return res.end('Log received and written to file successfully');
             } catch (e) {
+              console.error(`[Visitor Logger] Failed to write to file ${logFilePath}:`, e);
               res.statusCode = 500;
               res.setHeader('Content-Type', 'application/json');
-              return res.end(JSON.stringify({ error: 'Mock log failed' }));
+              return res.end(JSON.stringify({ error: 'Server logging failed. Check permissions.' }));
             }
-          } // END NEW MOCK LOG ENDPOINT
+          } // END LOG ENDPOINT
 
 
           return next();

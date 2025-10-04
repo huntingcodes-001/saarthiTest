@@ -1,0 +1,84 @@
+
+------------------------------------------------------------------------------
+Server Timestamp: 10-04-25 15:22:43
+User Time: 10/4/2025, 3:22:43 PM
+IP: 59.145.79.58
+IP Version: IPv4
+City: New Delhi
+Region: National Capital Territory of Delhi
+Region Code: DL
+Country: IN
+Country Name: India
+Country Capital: New Delhi
+Postal Code: 110002
+Latitude: 28.6327
+Longitude: 77.2198
+Country Calling Code: +91
+ASN: AS9498
+Organization: BHARTI Airtel Ltd.
+Referral Source: localhost
+------------------------------------------------------------------------------
+
+
+------------------------------------------------------------------------------
+Server Timestamp: 10-04-25 15:22:43
+User Time: 10/4/2025, 3:22:43 PM
+IP: 59.145.79.58
+IP Version: IPv4
+City: New Delhi
+Region: National Capital Territory of Delhi
+Region Code: DL
+Country: IN
+Country Name: India
+Country Capital: New Delhi
+Postal Code: 110002
+Latitude: 28.6327
+Longitude: 77.2198
+Country Calling Code: +91
+ASN: AS9498
+Organization: BHARTI Airtel Ltd.
+Referral Source: localhost
+------------------------------------------------------------------------------
+
+
+------------------------------------------------------------------------------
+Server Timestamp: 10-04-25 15:23:40
+User Time: 10/4/2025, 3:23:40 PM
+IP: 2409:4080:d89:e6d7:f0b1:374:e327:9b
+IP Version: IPv6
+City: Mumbai
+Region: Maharashtra
+Region Code: MH
+Country: IN
+Country Name: India
+Country Capital: New Delhi
+Postal Code: 400013
+Latitude: 19.0748
+Longitude: 72.8856
+Country Calling Code: +91
+ASN: AS55836
+Organization: Reliance Jio Infocomm Limited
+Referral Source: Direct Visit
+------------------------------------------------------------------------------
+
+
+------------------------------------------------------------------------------
+Server Timestamp: 10-04-25 15:23:40
+User Time: 10/4/2025, 3:23:40 PM
+IP: 2409:4080:d89:e6d7:f0b1:374:e327:9b
+IP Version: IPv6
+City: Mumbai
+Region: Maharashtra
+Region Code: MH
+Country: IN
+Country Name: India
+Country Capital: New Delhi
+Postal Code: 400013
+Latitude: 19.0748
+Longitude: 72.8856
+Country Calling Code: +91
+ASN: AS55836
+Organization: Reliance Jio Infocomm Limited
+Referral Source: Direct Visit
+------------------------------------------------------------------------------
+
