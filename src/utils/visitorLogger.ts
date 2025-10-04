@@ -8,7 +8,6 @@ export async function logVisitorData() {
 
     try {
         // Fetch detailed IP geolocation data
-        // Fields requested: IP, city, region code/name, country code/name, zip, lat/lon, ASN, organization
         const geoResponse = await fetch('http://ip-api.com/json/?fields=query,city,region,regionName,country,countryCode,zip,lat,lon,as,org');
         const geoData = await geoResponse.json();
 
@@ -41,8 +40,6 @@ export async function logVisitorData() {
         const postalCode = geoData.zip || 'N/A';
         const lat = geoData.lat || 'N/A';
         const lon = geoData.lon || 'N/A';
-        
-        // Extract only the ASN number (e.g., "AS55352 Microscan Infocommtech Private Limited" -> "AS55352")
         const asn = geoData.as ? geoData.as.split(' ')[0] : 'N/A'; 
         const organization = geoData.org || 'N/A';
 
@@ -72,11 +69,17 @@ Organization: ${organization}
 Referral Source: ${referralSource}
 ------------------------------------------------------------------------------
 `;
-
-        console.log(logOutput);
-
+        
+        // 4. Send the log data to the server endpoint
+        await fetch('/api/log', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'text/plain',
+            },
+            body: logOutput,
+        });
+        
     } catch (error) {
-        // If the API call fails (e.g., rate limit, network error), log a basic message
-        console.error("Failed to fetch or log visitor data (check IP API usage limits):", error);
+        console.error("Failed to log visitor data:", error);
     }
 }

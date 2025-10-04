@@ -49,6 +49,34 @@ export default defineConfig({
             }
           }
 
+          // ADDED: Mock log endpoint: accept POST /api/log and simulate writing to file
+          if (req.method === 'POST' && req.url.startsWith('/api/log')) {
+            try {
+              let logData = '';
+              // Consume the stream to read the body
+              await new Promise<void>((resolve) => {
+                req.on('data', (chunk) => {
+                  logData += chunk.toString();
+                });
+                req.on('end', () => resolve());
+              });
+              
+              // In development, we log to the Vite console to show the content.
+              console.log('*** MOCK SERVER LOGGING VISITOR DATA ***');
+              console.log(logData);
+              console.log('*** END OF LOG ENTRY ***');
+              
+              res.statusCode = 200;
+              res.setHeader('Content-Type', 'text/plain');
+              return res.end('Log received successfully');
+            } catch (e) {
+              res.statusCode = 500;
+              res.setHeader('Content-Type', 'application/json');
+              return res.end(JSON.stringify({ error: 'Mock log failed' }));
+            }
+          } // END NEW MOCK LOG ENDPOINT
+
+
           return next();
         });
       },
